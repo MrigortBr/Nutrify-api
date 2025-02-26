@@ -30,7 +30,15 @@ class Server {
     }
     loadConfig() {
         this.app.use(express_1.default.json({ limit: "10mb" }));
-        this.app.use((0, cors_1.default)());
+        this.app.use((0, cors_1.default)({
+            origin: ["https://nutrify-front.vercel.app"],
+            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            allowedHeaders: ["Content-Type", "Authorization"],
+        }));
+        this.app.use((req, res, next) => {
+            console.log("Origin da requisição:", req.headers.origin);
+            next();
+        });
     }
     loadRoutesAndMiddlewares() {
         return __awaiter(this, void 0, void 0, function* () {

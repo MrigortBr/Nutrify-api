@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Personalizado</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      padding: 20px;
+    }
+
+    img {
+      box-sizing: border-box;
+      padding: 2%;
+    }
+
+    .container {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 10px 10px 5px 0px rgba(0, 0, 0, 0.25);
+    }
+
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin-top: 20px;
+      background-color: #28a745;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <img src="../public/logo.png" alt="">
+    <h2>Olá, {{name}}!</h2>
+    <p>Recebemos uma solicitação para redefinir sua senha. Para continuar com a recuperação da sua conta, clique no
+      botão abaixo:</p>
+    <a class="button" href="{{reset_link}}">Redefinir Senha</a>
+    <p>Se você não solicitou essa alteração, ignore este e-mail. O link expirará em breve por segurança.</p>
+    <p>Se precisar de ajuda, entre em contato conosco.</p>
+    <p>Atenciosamente, Nutrify </p>
+  </div>
+</body>
+
+</html>
