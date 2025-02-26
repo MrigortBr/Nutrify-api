@@ -21,7 +21,17 @@ class Server {
 
   private loadConfig() {
     this.app.use(express.json({ limit: "10mb" }));
-    this.app.use(cors());
+    this.app.use(
+      cors({
+        origin: ["https://nutrify-front.vercel.app"],
+        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+      }),
+    );
+    this.app.use((req, res, next) => {
+      console.log("Origin da requisição:", req.headers.origin);
+      next();
+    });
   }
 
   private async loadRoutesAndMiddlewares() {
