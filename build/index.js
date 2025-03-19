@@ -12,31 +12,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.MySocket = void 0;
 const dotenv_1 = __importDefault(require("dotenv"));
 const express_1 = __importDefault(require("express"));
 require("./base/routerDecorator");
 const routerDecorator_1 = require("./base/routerDecorator");
 const cors_1 = __importDefault(require("cors"));
 const errorHandler_1 = require("./middlewares/errorHandler");
+const http_1 = __importDefault(require("http"));
+const index_1 = require("./socket/index");
 dotenv_1.default.config();
-class Server {
+class SERVER {
     constructor() {
         this.url = process.env.URL || "127.0.0.1";
         this.port = process.env.PORT || "2000";
         this.app = (0, express_1.default)();
         this.loadConfig();
         this.loadRoutesAndMiddlewares();
+        this.server = http_1.default.createServer(this.app);
+        exports.MySocket = new index_1.Socket(this.server);
         this.listenServer();
     }
     loadConfig() {
-        this.app.use(express_1.default.json({ limit: "10mb" }));
-        this.app.use((0, cors_1.default)({
-            origin: ["https://nutrify-front.vercel.app"],
-            methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-            allowedHeaders: ["Content-Type", "Authorization"],
-        }));
+        this.app.use(express_1.default.json({ limit: "50mb" }));
+        this.app.use((0, cors_1.default)());
         this.app.use((req, res, next) => {
-            console.log("Origin da requisição:", req.headers.origin);
             next();
         });
     }
@@ -47,9 +47,9 @@ class Server {
         });
     }
     listenServer() {
-        this.app.listen(this.port, () => {
+        this.server.listen(this.port, () => {
             console.log(`Servidor iniciado ${this.url}:${this.port}`);
         });
     }
 }
-new Server();
+new SERVER();

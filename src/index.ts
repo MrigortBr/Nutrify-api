@@ -4,32 +4,32 @@ import "./base/routerDecorator";
 import { RegisterRoutes } from "./base/routerDecorator";
 import cors from "cors";
 import { errorHandler } from "./middlewares/errorHandler";
+import http, { Server } from "http";
+import { Socket } from "./socket/index";
 
 dotenv.config();
 
-class Server {
+export let MySocket: Socket;
+
+class SERVER {
   private url: string = process.env.URL || "127.0.0.1";
   private port: string = process.env.PORT || "2000";
   private app;
+  private server: Server;
 
   constructor() {
     this.app = express();
     this.loadConfig();
     this.loadRoutesAndMiddlewares();
+    this.server = http.createServer(this.app);
+    MySocket = new Socket(this.server);
     this.listenServer();
   }
 
   private loadConfig() {
-    this.app.use(express.json({ limit: "10mb" }));
-    this.app.use(
-      cors({
-        origin: ["https://nutrify-front.vercel.app"],
-        methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        allowedHeaders: ["Content-Type", "Authorization"],
-      }),
-    );
+    this.app.use(express.json({ limit: "50mb" }));
+    this.app.use(cors());
     this.app.use((req, res, next) => {
-      console.log("Origin da requisição:", req.headers.origin);
       next();
     });
   }
@@ -40,10 +40,10 @@ class Server {
   }
 
   private listenServer() {
-    this.app.listen(this.port, () => {
+    this.server.listen(this.port, () => {
       console.log(`Servidor iniciado ${this.url}:${this.port}`);
     });
   }
 }
 
-new Server();
+new SERVER();

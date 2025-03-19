@@ -10,7 +10,7 @@ exports.up = function (knex) {
     table
       .enum("status", ["marked", "requested"], {
         useNative: true,
-        enumName: "marked_status",
+        enumName: "ENUMSatatusMarked",
       })
       .defaultTo("marked")
       .notNullable();

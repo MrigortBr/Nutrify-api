@@ -54,7 +54,6 @@ class CommentsModel {
                 return response;
             }
             catch (error) {
-                console.log(error);
                 throw new Error("PE-UNKW");
             }
         });

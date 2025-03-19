@@ -7,20 +7,20 @@ exports.up = function (knex) {
     table.increments("id").primary();
     table.integer("user_id").notNullable().references("id").inTable("users").onDelete("CASCADE");
     table
-      .enum("post_commentable", ["*", "onlyFallowers", "onlyIFallow", "fallowersAndIFallow"], {
+      .enum("post_commentable", ["*", "onlyFollowers", "onlyIFollow", "followersAndIFollow"], {
         useNative: true,
-        enumName: "post_commentable",
+        enumName: "ENUMpostCommentable",
       })
       .defaultTo("*")
       .notNullable();
     table
-      .enum("visibility", ["*", "onlyFallowers", "onlyIFallow", "fallowersAndIFallow", "draft", "archived"], {
+      .enum("visibility", ["*", "onlyFollowers", "onlyIFollow", "followersAndIFollow", "draft", "archived"], {
         useNative: true,
-        enumName: "post_visibility",
+        enumName: "ENUMpostVisibility",
       })
       .defaultTo("*")
       .notNullable();
-    table.binary("picture").notNullable();
+    table.text("picture").notNullable();
     table.text("caption").notNullable();
     table.timestamp("posted_at");
     table.timestamp("created_at").defaultTo(knex.fn.now());

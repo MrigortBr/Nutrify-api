@@ -31,6 +31,7 @@ class PostModel {
     insertPostAndMarked(data, userId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                console.log("try");
                 return yield this.db.transaction((db) => __awaiter(this, void 0, void 0, function* () {
                     const postAdd = {
                         caption: data.caption,
@@ -160,16 +161,16 @@ class PostModel {
                     const iFollow = (yield db("user_follow_user").where({ follower: userId, following: profileId })).length > 0 ? true : false;
                     const iLike = (yield db("post_like").where({ post_id: postId, user_id: userId }).first()) == undefined ? false : true;
                     if (isMyProfile) {
-                        myVisibility = ["*", "onlyFallowers", "onlyIFallow", "fallowersAndIFallow", "draft", "archived"];
+                        myVisibility = ["*", "onlyFollowers", "onlyIFollow", "followersAndIFollow", "draft", "archived"];
                     }
                     else if (ProfileIsMyFollower) {
-                        myVisibility.push(type_1.convertVisibility["onlyIFallow"]);
+                        myVisibility.push(type_1.convertVisibility["onlyIFollow"]);
                     }
                     else if (iFollow) {
-                        myVisibility.push(type_1.convertVisibility["onlyFallowers"]);
+                        myVisibility.push(type_1.convertVisibility["onlyFollowers"]);
                     }
                     else if (iFollow && ProfileIsMyFollower) {
-                        myVisibility.push(type_1.convertVisibility["fallowersAndIFallow"]);
+                        myVisibility.push(type_1.convertVisibility["followersAndIFollow"]);
                     }
                     const response = yield db("post")
                         .select([
@@ -209,6 +210,7 @@ class PostModel {
                 }));
             }
             catch (error) {
+                console.log(error);
                 if (error instanceof Error && error.message === "PC-E-PNE") {
                     throw new Error("PC-E-PNE");
                 }

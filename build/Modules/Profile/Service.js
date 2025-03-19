@@ -59,6 +59,7 @@ class ProfileService {
             return response;
         });
     }
+    //BUG Crash on error
     updateConfigUser(idUser, data) {
         return __awaiter(this, void 0, void 0, function* () {
             const response = Responses_1.returnResponse["PC_PR_PCU"];

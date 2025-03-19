@@ -15,6 +15,17 @@ export let descErrors: DescErrors = {
     description: "Você precisa estar logado, para pode acessar esta pagina.",
     statusCode: 400,
   },
+  "CS-NCST": {
+    message: "Você não tem permissão para ver esse planejamento.",
+    description: "",
+    statusCode: 400,
+  },
+
+  "CS-USIN": {
+    message: "Usuario não existe!",
+    description: "",
+    statusCode: 400,
+  },
 };
 
 export interface ErrorResponse {

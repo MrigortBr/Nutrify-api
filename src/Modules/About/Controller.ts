@@ -1,15 +1,19 @@
-import { Response, Request } from "express";
+import { Response } from "express";
 import aboutData from "./typeAbout";
 import { Controller, Get } from "../../base/routerDecorator";
-import { EmailModule } from "../../base/emailModule";
 import Authorization from "../../middlewares/authorization/Middleware";
 import { RequestAuthorized } from "../../middlewares/authorization/type";
+import SocketModel from "../../socket/model";
 
 @Controller("/")
 export class AboutController {
-  @Get("/", [Authorization])
-  about(req: RequestAuthorized, res: Response) {
+  public model: SocketModel = new SocketModel();
+
+  @Get("/")
+  async about(req: RequestAuthorized, res: Response) {
+    const r = await this.model.getMyNewChat(15, 57);
     res.status(200);
-    res.json(aboutData);
+    //res.json(aboutData);
+    res.json(r);
   }
 }

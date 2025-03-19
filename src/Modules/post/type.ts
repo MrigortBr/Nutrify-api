@@ -5,16 +5,16 @@ export type PublishData = {
   caption: string;
   markers: string[];
   idMarkers: { id: number }[];
-  canSee: "*" | "onlyFallowers" | "onlyIFallow" | "fallowersAndIFallow";
-  canComment: "*" | "onlyFallowers" | "onlyIFallow" | "fallowersAndIFallow" | "draft" | "archived";
+  canSee: "*" | "onlyFollowers" | "onlyIFollow" | "followersAndIFollow";
+  canComment: "*" | "onlyFollowers" | "onlyIFollow" | "followersAndIFollow" | "draft" | "archived";
   userId: number;
 };
 
 export type PublishDataToSend = {
   picture: string;
   caption: string;
-  post_commentable: "*" | "onlyFallowers" | "onlyIFallow" | "fallowersAndIFallow" | "draft" | "archived";
-  visibility: "*" | "onlyFallowers" | "onlyIFallow" | "fallowersAndIFallow";
+  post_commentable: "*" | "onlyFollowers" | "onlyIFollow" | "followersAndIFollow" | "draft" | "archived";
+  visibility: "*" | "onlyFollowers" | "onlyIFollow" | "followersAndIFollow";
   tags: string[];
   user_id: number;
 };
@@ -25,16 +25,16 @@ type Convert = {
 
 export const convertComentable: Convert = {
   "*": "*",
-  onlyFallowers: "onlyFallowers",
-  onlyIFallow: "onlyIFallow",
-  fallowersAndIFallow: "fallowersAndIFallow",
+  onlyFollowers: "onlyFallowers",
+  onlyIFollow: "onlyIFallow",
+  followersAndIFollow: "followersAndIFollow",
 };
 
 export const convertVisibility: Convert = {
   "*": "*",
-  onlyFallowers: "onlyFallowers",
-  onlyIFallow: "onlyIFallow",
-  fallowersAndIFallow: "fallowersAndIFallow",
+  onlyFollowers: "onlyFollowers",
+  onlyIFollow: "onlyIFollow",
+  followersAndIFollow: "followersAndIFollow",
   draft: "draft",
   archived: "archived",
 };

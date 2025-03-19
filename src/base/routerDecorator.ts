@@ -97,11 +97,8 @@ async function loadControllers() {
 
   // Lê todas as subpastas de Modules
   const modules = fs.readdirSync(modulesPath);
-  console.log(modules);
-
   for (const module of modules) {
-    const controllerPath = path.join(modulesPath, module, "Controller.js");
-    console.log(controllerPath);
+    const controllerPath = path.join(modulesPath, module, `Controller${path.extname(__filename)}`);
 
     if (fs.existsSync(controllerPath)) {
       await import(controllerPath);

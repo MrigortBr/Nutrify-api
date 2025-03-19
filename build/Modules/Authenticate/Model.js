@@ -35,6 +35,7 @@ class UserModel {
                 return result[0];
             }
             catch (error) {
+                console.log(error);
                 if (typeof error.code == "string") {
                     const code = error.code;
                     if (code == "23505")

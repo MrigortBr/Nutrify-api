@@ -91,20 +91,20 @@ class GeralModel {
                     const ProfileIsMyFollower = (yield db("user_follow_user").where({ follower: profileId, following: id })).length > 0 ? true : false;
                     const iFollow = (yield db("user_follow_user").where({ follower: id, following: profileId })).length > 0 ? true : false;
                     if (isMyProfile) {
-                        myVisibility = ["*", "onlyFallowers", "onlyIFallow", "fallowersAndIFallow", "draft", "archived"];
-                        myVisibilityUser = ["*", "onlyFallowers", "onlyIFallow", "fallowersAndIFallow"];
+                        myVisibility = ["*", "onlyFollowers", "onlyIFollow", "followersAndIFollow", "draft", "archived"];
+                        myVisibilityUser = ["*", "onlyFollowers", "onlyIFollow", "followersAndIFollow"];
                     }
                     if (ProfileIsMyFollower) {
-                        myVisibility.push(type_1.convertVisibility["onlyIFallow"]);
-                        myVisibilityUser.push(type_1.convertVisibility["onlyIFallow"]);
+                        myVisibility.push(type_1.convertVisibility["onlyIFollow"]);
+                        myVisibilityUser.push(type_1.convertVisibility["onlyIFollow"]);
                     }
                     if (iFollow) {
-                        myVisibility.push(type_1.convertVisibility["onlyFallowers"]);
-                        myVisibilityUser.push(type_1.convertVisibility["onlyIFallow"]);
+                        myVisibility.push(type_1.convertVisibility["onlyFollowers"]);
+                        myVisibilityUser.push(type_1.convertVisibility["onlyIFollow"]);
                     }
                     if (iFollow && ProfileIsMyFollower) {
-                        myVisibility.push(type_1.convertVisibility["fallowersAndIFallow"]);
-                        myVisibilityUser.push(type_1.convertVisibility["fallowersAndIFallow"]);
+                        myVisibility.push(type_1.convertVisibility["followersAndIFollow"]);
+                        myVisibilityUser.push(type_1.convertVisibility["followersAndIFollow"]);
                     }
                     return {
                         visibilityPosts: myVisibility,

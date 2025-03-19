@@ -26,6 +26,7 @@ export default class PostModel {
 
   async insertPostAndMarked(data: PublishData, userId: number) {
     try {
+      console.log("try");
       return await this.db.transaction(async (db) => {
         const postAdd: PublishDataToSend = {
           caption: data.caption,
@@ -35,9 +36,7 @@ export default class PostModel {
           user_id: userId,
           tags: getHashTags(data.caption),
         };
-
         const idPost = await db("post").insert(postAdd).returning("id");
-
         if (idPost[0].id) {
           const relationAdd: PostMarked[] = [];
           if (data.idMarkers) {
@@ -154,13 +153,13 @@ export default class PostModel {
         const iFollow = (await db("user_follow_user").where({ follower: userId, following: profileId })).length > 0 ? true : false;
         const iLike = (await db("post_like").where({ post_id: postId, user_id: userId }).first()) == undefined ? false : true;
         if (isMyProfile) {
-          myVisibility = ["*", "onlyFallowers", "onlyIFallow", "fallowersAndIFallow", "draft", "archived"];
+          myVisibility = ["*", "onlyFollowers", "onlyIFollow", "followersAndIFollow", "draft", "archived"];
         } else if (ProfileIsMyFollower) {
-          myVisibility.push(convertVisibility["onlyIFallow"]);
+          myVisibility.push(convertVisibility["onlyIFollow"]);
         } else if (iFollow) {
-          myVisibility.push(convertVisibility["onlyFallowers"]);
+          myVisibility.push(convertVisibility["onlyFollowers"]);
         } else if (iFollow && ProfileIsMyFollower) {
-          myVisibility.push(convertVisibility["fallowersAndIFallow"]);
+          myVisibility.push(convertVisibility["followersAndIFollow"]);
         }
 
         const response: SimplePost = await db("post")
@@ -203,6 +202,7 @@ export default class PostModel {
         return response;
       });
     } catch (error) {
+      console.log(error);
       if (error instanceof Error && error.message === "PC-E-PNE") {
         throw new Error("PC-E-PNE");
       } else {

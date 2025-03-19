@@ -18,6 +18,7 @@ class RegisterUser implements IRegisterUser {
     this.name = name;
     this.email = email;
     this.password = password;
+    //BUG Not validate uniqueKey of user
     this.username = `${name.replace(/\s+/g, "")}${email.charAt(2)}`.slice(0, 15);
   }
 
@@ -53,6 +54,7 @@ class RegisterUser implements IRegisterUser {
     if (this.email != undefined) {
       new EmailModule(this.email, "welcome.html", "Bem vindo ao nutrify", {
         name: this.name,
+        link: `${process.env.PAGE_RESET_EMAIL}`,
       }).sendEmail();
     }
   }

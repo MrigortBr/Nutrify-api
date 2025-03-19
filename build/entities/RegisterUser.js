@@ -17,6 +17,7 @@ class RegisterUser {
         this.name = name;
         this.email = email;
         this.password = password;
+        //BUG Not validate uniqueKey of user
         this.username = `${name.replace(/\s+/g, "")}${email.charAt(2)}`.slice(0, 15);
     }
     static create(tempUser) {
@@ -53,6 +54,7 @@ class RegisterUser {
             if (this.email != undefined) {
                 new emailModule_1.EmailModule(this.email, "welcome.html", "Bem vindo ao nutrify", {
                     name: this.name,
+                    link: `${process.env.PAGE_RESET_EMAIL}`,
                 }).sendEmail();
             }
         });

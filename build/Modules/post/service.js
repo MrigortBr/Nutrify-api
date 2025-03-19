@@ -23,6 +23,7 @@ class PostService {
     publish(data, idUser) {
         return __awaiter(this, void 0, void 0, function* () {
             if (data.markers.length > 0) {
+                console.log("erro aqui");
                 const res = yield this.model.getUserByUsername(data.markers);
                 data.idMarkers = res;
             }

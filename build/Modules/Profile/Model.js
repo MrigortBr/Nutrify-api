@@ -37,16 +37,16 @@ class ProfileModel {
                     const ProfileIsMyFollower = (yield db("user_follow_user").where({ follower: profileId, following: id })).length > 0 ? true : false;
                     const iFollow = (yield db("user_follow_user").where({ follower: id, following: profileId })).length > 0 ? true : false;
                     if (isMyProfile) {
-                        myVisibility = ["*", "onlyFallowers", "onlyIFallow", "fallowersAndIFallow", "draft", "archived"];
+                        myVisibility = ["*", "onlyFollowers", "onlyIFollow", "followersAndIFollow", "draft", "archived"];
                     }
                     if (ProfileIsMyFollower) {
-                        myVisibility.push(type_1.convertVisibility["onlyIFallow"]);
+                        myVisibility.push(type_1.convertVisibility["onlyIFollow"]);
                     }
                     if (iFollow) {
-                        myVisibility.push(type_1.convertVisibility["onlyFallowers"]);
+                        myVisibility.push(type_1.convertVisibility["onlyFollowers"]);
                     }
                     if (iFollow && ProfileIsMyFollower) {
-                        myVisibility.push(type_1.convertVisibility["fallowersAndIFallow"]);
+                        myVisibility.push(type_1.convertVisibility["followersAndIFollow"]);
                     }
                     const r = yield db("users")
                         .leftJoin("user_follow_user", "users.id", "user_follow_user.follower")
@@ -129,7 +129,6 @@ class ProfileModel {
             }
             catch (e) {
                 const error = e;
-                console.log(error);
                 throw new Error(error.message);
             }
         });
@@ -140,8 +139,7 @@ class ProfileModel {
                 return yield this.db("users").update(data).where({ id });
             }
             catch (e) {
-                const error = e;
-                throw new Error(error.message);
+                throw new Error("PE-UNKW");
             }
         });
     }

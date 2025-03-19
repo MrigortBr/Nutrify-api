@@ -33,19 +33,19 @@ export default class ProfileModel {
         const iFollow = (await db("user_follow_user").where({ follower: id, following: profileId })).length > 0 ? true : false;
 
         if (isMyProfile) {
-          myVisibility = ["*", "onlyFallowers", "onlyIFallow", "fallowersAndIFallow", "draft", "archived"];
+          myVisibility = ["*", "onlyFollowers", "onlyIFollow", "followersAndIFollow", "draft", "archived"];
         }
 
         if (ProfileIsMyFollower) {
-          myVisibility.push(convertVisibility["onlyIFallow"]);
+          myVisibility.push(convertVisibility["onlyIFollow"]);
         }
 
         if (iFollow) {
-          myVisibility.push(convertVisibility["onlyFallowers"]);
+          myVisibility.push(convertVisibility["onlyFollowers"]);
         }
 
         if (iFollow && ProfileIsMyFollower) {
-          myVisibility.push(convertVisibility["fallowersAndIFallow"]);
+          myVisibility.push(convertVisibility["followersAndIFollow"]);
         }
 
         const r: ProfileUser = await db("users")
@@ -130,8 +130,6 @@ export default class ProfileModel {
       return await this.db("users").select(["whosendmessage ", "whoseemyposts ", "whoseemyplanning "]).where({ id }).first();
     } catch (e) {
       const error = e as Error;
-      console.log(error);
-
       throw new Error(error.message);
     }
   }
@@ -140,8 +138,7 @@ export default class ProfileModel {
     try {
       return await this.db("users").update(data).where({ id });
     } catch (e) {
-      const error = e as Error;
-      throw new Error(error.message);
+      throw new Error("PE-UNKW");
     }
   }
 }

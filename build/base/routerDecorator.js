@@ -137,10 +137,8 @@ function loadControllers() {
         const modulesPath = path_1.default.join(__dirname, "../Modules");
         // Lê todas as subpastas de Modules
         const modules = fs_1.default.readdirSync(modulesPath);
-        console.log(modules);
         for (const module of modules) {
             const controllerPath = path_1.default.join(modulesPath, module, "Controller.js");
-            console.log(controllerPath);
             if (fs_1.default.existsSync(controllerPath)) {
                 yield Promise.resolve(`${controllerPath}`).then(s => __importStar(require(s)));
                 if (process.env.STATUS == "DEV" || process.env.SHOWIMPORTS == "1")

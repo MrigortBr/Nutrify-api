@@ -8,26 +8,41 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AboutController = void 0;
-const typeAbout_1 = __importDefault(require("./typeAbout"));
 const routerDecorator_1 = require("../../base/routerDecorator");
-const Middleware_1 = __importDefault(require("../../middlewares/authorization/Middleware"));
+const model_1 = __importDefault(require("../../socket/model"));
 let AboutController = class AboutController {
+    constructor() {
+        this.model = new model_1.default();
+    }
     about(req, res) {
-        res.status(200);
-        res.json(typeAbout_1.default);
+        return __awaiter(this, void 0, void 0, function* () {
+            const r = yield this.model.getMyNewChat(15, 57);
+            res.status(200);
+            //res.json(aboutData);
+            res.json(r);
+        });
     }
 };
 exports.AboutController = AboutController;
 __decorate([
-    (0, routerDecorator_1.Get)("/", [Middleware_1.default]),
+    (0, routerDecorator_1.Get)("/"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], AboutController.prototype, "about", null);
 exports.AboutController = AboutController = __decorate([
     (0, routerDecorator_1.Controller)("/")

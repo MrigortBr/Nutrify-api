@@ -3,15 +3,19 @@
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
  */
+
+require("dotenv").config();
+
 module.exports = {
   development: {
     client: "postgresql",
     connection: {
-      host: "dpg-cuj03prqf0us73dvcep0-a.oregon-postgres.render.com",
-      database: "server_test_render",
-      user: "server_test_render_user",
-      password: "iLDCVMd1i4mIH4yxXbBLZBvF3n3PmkOs",
-      ssl: { rejectUnauthorized: true },
+      host: process.env.DB_HOST,
+      database: process.env.DB_DATABASE,
+      user: process.env.DB_USER,
+      password: process.env.DB_PWD,
+      // ssl: { rejectUnauthorized: true },
+      timeout: 100000, // tempo de espera de 10 segundos, ajuste conforme necessário
     },
     pool: {
       min: 2,

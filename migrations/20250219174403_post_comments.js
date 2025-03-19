@@ -7,7 +7,7 @@ exports.up = function (knex) {
     table.increments("id").primary();
     table.integer("post_id").notNullable().references("id").inTable("post").onDelete("CASCADE");
     table.integer("user_id").notNullable().references("id").inTable("users").onDelete("CASCADE");
-    table.string("comment", 255).notNullable();
+    table.string("comment", 2000).notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now());
   });
 };

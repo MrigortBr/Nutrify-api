@@ -94,23 +94,23 @@ export default class GeralModel {
         const iFollow = (await db("user_follow_user").where({ follower: id, following: profileId })).length > 0 ? true : false;
 
         if (isMyProfile) {
-          myVisibility = ["*", "onlyFallowers", "onlyIFallow", "fallowersAndIFallow", "draft", "archived"];
-          myVisibilityUser = ["*", "onlyFallowers", "onlyIFallow", "fallowersAndIFallow"];
+          myVisibility = ["*", "onlyFollowers", "onlyIFollow", "followersAndIFollow", "draft", "archived"];
+          myVisibilityUser = ["*", "onlyFollowers", "onlyIFollow", "followersAndIFollow"];
         }
 
         if (ProfileIsMyFollower) {
-          myVisibility.push(convertVisibility["onlyIFallow"]);
-          myVisibilityUser.push(convertVisibility["onlyIFallow"]);
+          myVisibility.push(convertVisibility["onlyIFollow"]);
+          myVisibilityUser.push(convertVisibility["onlyIFollow"]);
         }
 
         if (iFollow) {
-          myVisibility.push(convertVisibility["onlyFallowers"]);
-          myVisibilityUser.push(convertVisibility["onlyIFallow"]);
+          myVisibility.push(convertVisibility["onlyFollowers"]);
+          myVisibilityUser.push(convertVisibility["onlyIFollow"]);
         }
 
         if (iFollow && ProfileIsMyFollower) {
-          myVisibility.push(convertVisibility["fallowersAndIFallow"]);
-          myVisibilityUser.push(convertVisibility["fallowersAndIFallow"]);
+          myVisibility.push(convertVisibility["followersAndIFollow"]);
+          myVisibilityUser.push(convertVisibility["followersAndIFollow"]);
         }
 
         return {

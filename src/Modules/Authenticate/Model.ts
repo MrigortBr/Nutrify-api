@@ -27,6 +27,7 @@ class UserModel {
       const result = await this.db("users").insert(user).returning("id");
       return result[0];
     } catch (error) {
+      console.log(error);
       if (typeof (error as { code: string }).code == "string") {
         const code = (error as { code: string }).code;
         if (code == "23505") throw new Error("PG-23505-EM");

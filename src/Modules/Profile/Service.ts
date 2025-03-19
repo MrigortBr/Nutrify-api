@@ -56,6 +56,7 @@ export default class ProfileService {
     return response;
   }
 
+  //BUG Crash on error
   async updateConfigUser(idUser: number, data: updateUserPrivacy): Promise<responseProfile> {
     const response = returnResponse["PC_PR_PCU"];
 

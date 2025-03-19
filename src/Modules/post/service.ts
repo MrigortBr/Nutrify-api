@@ -14,6 +14,7 @@ export default class PostService {
 
   async publish(data: PublishData, idUser: number): Promise<responsePost> {
     if (data.markers.length > 0) {
+      console.log("erro aqui");
       const res = await this.model.getUserByUsername(data.markers);
       data.idMarkers = res;
     }
@@ -23,7 +24,6 @@ export default class PostService {
 
   async getById(postId: string, userId: number): Promise<responsePost> {
     if (!postId) throw new Error("PC-E-PNE");
-
     const post = await this.model.getById(postId, userId);
     const response = returnResponse["PC_PR_PLS"];
     response.post = post;
