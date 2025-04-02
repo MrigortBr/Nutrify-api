@@ -3,6 +3,7 @@ import { ReturnResponse } from "../../base/responsesData";
 import DatabaseConnection from "../../data/connection";
 import { RegisterUser } from "../../entities/RegisterUser";
 import { SendedUser } from "../../entities/SendedUser";
+import { CRN } from "../../entities/users";
 import { UserModel } from "./Model";
 import { responseLogin, returnResponse } from "./Responses";
 import "./erros";
@@ -28,9 +29,12 @@ export class AuthenticateService {
 
     sendedUser.generateJWT();
 
+    const idNutri = await this.model.userIsNutri(user.id);
+
     if (sendedUser.jwtKey == undefined) throw new Error("PE-NPGJ");
     const response = returnResponse["AC_PR_LASU"];
     response.jwt = sendedUser.jwtKey;
+    response.type = idNutri != undefined ? "nutri" : "user";
 
     return response;
   }
@@ -42,6 +46,21 @@ export class AuthenticateService {
       password: password,
     });
     const idUser = await this.model.registerUser(registerUser);
+    registerUser.sayWelcome();
+    const jwtKey = await generateKeyJWT(idUser.id);
+    const response = returnResponse["AC_PR_RASU"];
+    response.jwt = jwtKey;
+    return response;
+  }
+
+  async registerNutri(name: string, email: string, password: string, crn: CRN, typeCRN: string) {
+    const registerUser: RegisterUser = await RegisterUser.create({
+      email: email,
+      name: name,
+      password: password,
+    });
+    const idUser = await this.model.registerNutri(registerUser, crn, typeCRN);
+
     registerUser.sayWelcome();
     const jwtKey = await generateKeyJWT(idUser.id);
     const response = returnResponse["AC_PR_RASU"];

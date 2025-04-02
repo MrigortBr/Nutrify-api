@@ -31,4 +31,15 @@ export class AuthenticateController {
       next(error);
     }
   }
+
+  @Post("/register/nutri")
+  async registerNutritionist(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { email, password, name, crn, typeCRN } = req.body;
+      const response = await this.service.registerNutri(name, email, password, crn, typeCRN);
+      res.json(response).status(response.statusCode);
+    } catch (error) {
+      next(error);
+    }
+  }
 }

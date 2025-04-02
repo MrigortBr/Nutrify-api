@@ -14,7 +14,7 @@ module.exports = {
       database: process.env.DB_DATABASE,
       user: process.env.DB_USER,
       password: process.env.DB_PWD,
-      // ssl: { rejectUnauthorized: true },
+      //ssl: { rejectUnauthorized: true },
       timeout: 100000, // tempo de espera de 10 segundos, ajuste conforme necessário
     },
     pool: {

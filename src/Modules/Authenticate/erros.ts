@@ -10,6 +10,11 @@ const errosLogin: DescErrors = {
     description: "O Email informado ja foi registrado tente recuperar sua conta",
     statusCode: 400,
   },
+  "PG-23505-CR": {
+    message: "CRN já registrado.",
+    description: "O Email informado ja foi registrado tente recuperar sua conta",
+    statusCode: 400,
+  },
   "PE-IFLL": { message: "Campos invalidos.", description: "Preencha todos os campos para poder realizar o login.", statusCode: 400 },
   "PE-IFLL-EM": { message: "Campos invalidos.", description: "Preencha o campo de email para realizar o login.", statusCode: 400 },
   "PE-IFLL-PW": { message: "Campos invalidos.", description: "Preencha o campo de senha para realizar o login.", statusCode: 400 },

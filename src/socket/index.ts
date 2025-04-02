@@ -45,6 +45,15 @@ export class Socket {
         socket.emit(`${data.username}Online`, user ? true : false);
       });
 
+      socket.on("userIsOnlineNutri", async (data: { nutriId: string; username: string }) => {
+        const r = await this.model.getUsernameForNutrId(data.nutriId);
+        if (r) {
+          data.username = r;
+          const user = this.dbSocket.findUserTokenByUsername(data.username);
+          socket.emit(`${data.nutriId}OnlineNutri`, { online: user ? true : false, username: r });
+        }
+      });
+
       socket.on("getChat", async (data: { username: string }) => {
         const myUsername = this.dbSocket.findUserTokenByToken(socket.id)?.getUsername();
         if (myUsername && data.username) {
@@ -77,6 +86,20 @@ export class Socket {
           const r = await this.model.getHistory(myId.id, userId.id);
           const response = dataDBAForData(r, myId.id.toString(), myUsername || "", username);
           socket.emit(`${socket.id}${username}getHistory`, response);
+        } catch (error) {
+          //console.log(error);
+        }
+      });
+
+      socket.on("getHistoryNutri", async (data: { username: string }) => {
+        try {
+          const { username } = data;
+          const userId = await this.model.getIdByUsername(username);
+          const myUsername = this.dbSocket.findUserTokenByToken(socket.id)?.getUsername();
+          const myId = await this.model.getIdByUsername(myUsername || "");
+          const r = await this.model.getHistoryNutri(myId.id, userId.id);
+          const response = dataDBAForData(r, myId.id.toString(), myUsername || "", username);
+          socket.emit(`${socket.id}${username}getHistoryNutri`, response);
         } catch (error) {
           //console.log(error);
         }
@@ -118,10 +141,36 @@ export class Socket {
         } catch (error) {}
       });
 
+      socket.on("sendMessageNutri", async (data: { username: string; message: string }) => {
+        try {
+          const { username, message } = data;
+          const userId = await this.model.getIdByUsername(username);
+          const myUsername = this.dbSocket.findUserTokenByToken(socket.id)?.getUsername();
+          const myId = await this.model.getIdByUsername(myUsername ?? "");
+          const r = await this.model.setNewMessageNutri(myId.id, userId.id, message);
+          const response = dataDBAForData(r, myId.id.toString(), myUsername || "", username);
+          socket.emit(`${socket.id}${username}sendedMessageNutri`, response);
+          if (userId) {
+            const userSendedToken = this.dbSocket.findUserTokenByUsername(username);
+            if (userSendedToken) {
+              socket.to(userSendedToken.getIdToken()).emit(`${userSendedToken.getIdToken()}${myUsername}recivedMessageNutri`, response);
+              socket.to(userSendedToken.getIdToken()).emit(`${userSendedToken.getIdToken()}CurrierChatNutri`, response);
+            }
+          }
+        } catch (error) {}
+      });
+
       socket.on("getProfile", async (data: { search: string }) => {
         const profiles = await this.model.getProfileByNameOrUsername(data.search);
         this.io.emit(`${socket.id}getProfile${data.search}`, profiles);
       });
+
+      socket.on(
+        "finishNutri",
+        async (data: { id: number; finishService: boolean; rating: number; description: string; nutriId: string }) => {
+          await this.model.finishNutri(data.id, data.finishService, data.rating, data.description, data.nutriId);
+        },
+      );
 
       socket.on("disconnect", () => {
         const user = this.dbSocket.findUserTokenByToken(socket.id);

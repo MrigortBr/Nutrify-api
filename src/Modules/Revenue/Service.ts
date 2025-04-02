@@ -1,0 +1,100 @@
+import DatabaseConnection from "../../data/connection";
+import { Revenue, RevenuePlan } from "./entity";
+import RevenueModel from "./Model";
+import { RevenueResponse, returnResponse } from "./Responses";
+
+export default class RevenueService {
+  private model: RevenueModel;
+
+  constructor() {
+    this.model = new RevenueModel(DatabaseConnection.getInstance());
+  }
+
+  async getRevenues(nutriId: number | undefined): Promise<RevenueResponse> {
+    if (!nutriId) throw new Error("NC-E-NN");
+
+    const r = await this.model.getRevenues(nutriId);
+
+    const response = returnResponse["RC_PR_NI"];
+    response.revenue = r;
+    return response;
+  }
+
+  async getRevenuesForClient(nutriId: number | undefined, id: string | undefined, date: string | undefined): Promise<RevenueResponse> {
+    if (!nutriId) throw new Error("NC-E-NN");
+    if (!id) throw new Error("NC-E-NN");
+    if (!date) throw new Error("NC-E-NN");
+
+    const dateMax = await this.model.iCanEditThisUser(nutriId, id);
+
+    if (this.hasPassed48Hours(dateMax)) throw new Error("RE-E-NC");
+
+    const r = await this.model.getRevenuesForClient(id, date);
+
+    const response = returnResponse["RC_PR_NI"];
+    response.revenue = r;
+    return response;
+  }
+
+  async createRevenue(nutriId: number | undefined, data: Revenue | undefined): Promise<RevenueResponse> {
+    if (!nutriId) throw new Error("NC-E-NN");
+    if (!data) throw new Error("NC-E-NN");
+
+    data.initHour = this.toISOStringWithTime(data.initHour);
+    data.finalHour = this.toISOStringWithTime(data.finalHour);
+
+    const r = await this.model.createRevenue(nutriId, data);
+
+    const response = returnResponse["RC_PR_NC"];
+    response.id = r;
+    return response;
+  }
+
+  async createRevenueUser(nutriId: number | undefined, data: RevenuePlan[] | undefined, id: string | undefined): Promise<RevenueResponse> {
+    if (!nutriId) throw new Error("NC-E-NN");
+    if (!data) throw new Error("NC-E-NN");
+    if (!id) throw new Error("NC-E-NN");
+
+    const dateMax = await this.model.iCanEditThisUser(nutriId, id);
+    if (this.hasPassed48Hours(dateMax)) throw new Error("RE-E-NC");
+
+    await this.model.createRevenueUser(nutriId, data, id);
+    const response = returnResponse["RC_PR_NC"];
+    return response;
+  }
+
+  async updateRevenue(nutriId: number | undefined, data: Revenue | undefined): Promise<RevenueResponse> {
+    if (!nutriId) throw new Error("NC-E-NN");
+    if (!data) throw new Error("NC-E-NN");
+
+    data.initHour = this.toISOStringWithTime(data.initHour);
+    data.finalHour = this.toISOStringWithTime(data.finalHour);
+
+    await this.model.updateRevenue(nutriId, data);
+
+    const response = returnResponse["RC_PR_NU"];
+    return response;
+  }
+
+  async deleteRevenue(nutriId: number | undefined, id: string | undefined): Promise<RevenueResponse> {
+    if (!nutriId) throw new Error("NC-E-NN");
+    if (!id) throw new Error("NC-E-NN");
+
+    await this.model.deleteRevenue(nutriId, id);
+
+    const response = returnResponse["RC_PR_ND"];
+    return response;
+  }
+
+  private toISOStringWithTime(time: string): string {
+    return new Date(`${new Date().toISOString().split("T")[0]}T${time}:00`).toISOString();
+  }
+
+  private hasPassed48Hours(date: Date): boolean {
+    const now = new Date(); // Data atual
+    const diffInMs = now.getTime() - date.getTime(); // Diferença em milissegundos
+    const diffInHours = diffInMs / (1000 * 60 * 60); // Converte para horas
+
+    return diffInHours >= 48; // Retorna true se passou de 48 horas
+  }
+}

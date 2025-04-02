@@ -35,9 +35,31 @@ export default class SocketModel {
     }
   }
 
+  async setNewMessageNutri(user_id_one: number, user_id_two: number, message: string): Promise<dataHistoryDBA[]> {
+    try {
+      return await this.db("user_message_nutri")
+        .insert({ user_id_one, user_id_two, message, identifier_chat: getMinMax(user_id_one, user_id_two) })
+        .returning("*");
+    } catch (error) {
+      console.log(error);
+      throw new Error("PE-UNKW");
+    }
+  }
+
   async getHistory(user_id_one: number, user_id_two: number): Promise<dataHistoryDBA[]> {
     try {
       return await this.db("user_message_user")
+        .select("*")
+        .where({ user_id_one, user_id_two })
+        .orWhere({ user_id_one: user_id_two, user_id_two: user_id_one });
+    } catch (error) {
+      throw new Error("PE-UNKW");
+    }
+  }
+
+  async getHistoryNutri(user_id_one: number, user_id_two: number): Promise<dataHistoryDBA[]> {
+    try {
+      return await this.db("user_message_nutri")
         .select("*")
         .where({ user_id_one, user_id_two })
         .orWhere({ user_id_one: user_id_two, user_id_two: user_id_one });
@@ -113,6 +135,35 @@ export default class SocketModel {
     } catch (error) {
       console.log(error);
       return [];
+    }
+  }
+
+  async getUsernameForNutrId(nutriId: string): Promise<string> {
+    try {
+      const r: { username: string } = await this.db("user_crn")
+        .select("users.username")
+        .join("users", "users.id", "user_crn.user_id")
+        .first();
+
+      return r.username;
+    } catch (error) {
+      console.log(error);
+      throw new Error("PE-UNKW");
+    }
+  }
+
+  async finishNutri(id: number, finishService: boolean, rating: number, description: string, nutri_id: string) {
+    try {
+      await this.db("user_nutri")
+        .update({
+          finished: finishService,
+          rating: rating,
+          description: description,
+        })
+        .where({ nutri_id: nutri_id, id: id });
+    } catch (error) {
+      console.log(error);
+      throw new Error("PE-UNKW");
     }
   }
 }
