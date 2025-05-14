@@ -23,7 +23,7 @@ export default class HomeModel {
             "post.picture",
             "post.caption",
             db.raw("BOOL_OR(post_like.user_id = ?)::BOOLEAN as iLike", [id]),
-            db.raw("COUNT(DISTINCT post_like.post_id) as likes"),
+            db.raw("COUNT(post_like.post_id) as likes"),
             db.raw("COUNT(post_comments.post_id) as commentsNumber"),
           ])
           .leftJoin("users", "users.id", "post.user_id")
@@ -37,7 +37,41 @@ export default class HomeModel {
           })
           .groupBy(["post.id", "users.picture", "users.username", "post.picture", "post.caption"])
           .orderBy("post.created_at", "desc");
+        return r;
+      });
+    } catch (error) {
+      throw new Error("PE-UNKW");
+    }
+  }
 
+  async getFollow(id: number) {
+    try {
+      return this.db.transaction(async (db) => {
+        let myVisibility = ["*"];
+
+        const response: iCanInPost = {
+          iCanComment: false,
+          iCanSee: false,
+        };
+
+        let r: SimplePost[] = await db("post")
+          .select([
+            "users.picture as pictureUser",
+            "users.username",
+            "post.id",
+            "post.picture",
+            "post.caption",
+            db.raw("BOOL_OR(post_like.user_id = ?)::BOOLEAN as iLike", [id]),
+            db.raw("COUNT(post_like.post_id) as likes"),
+            db.raw("COUNT(post_comments.post_id) as commentsNumber"),
+          ])
+          .leftJoin("user_follow_user", "user_follow_user.following", "post.user_id")
+          .where("user_follow_user.follower", id)
+          .leftJoin("users", "users.id", "post.user_id")
+          .leftJoin("post_like", "post.id", "post_like.post_id")
+          .leftJoin("post_comments", "post.id", "post_comments.post_id")
+          .groupBy(["post.id", "users.picture", "users.username", "post.picture", "post.caption"])
+          .orderBy("post.created_at", "desc");
         return r;
       });
     } catch (error) {

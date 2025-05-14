@@ -13,12 +13,11 @@ export default class MarkedModel {
     try {
       return this.db.transaction(async (db) => {
         try {
-          console.log(visibility);
           const r: picture[] = await db("post_user_marked")
             .select([
               "post.id",
               "post.picture",
-              db.raw("COUNT(DISTINCT post_like.post_id) as likes"),
+              db.raw("COUNT(post_like.post_id) as likes"),
               db.raw("COUNT(DISTINCT post_comments.post_id) as comments"),
             ])
             .innerJoin("post", "post.id", "post_user_marked.post_id")
@@ -40,6 +39,14 @@ export default class MarkedModel {
           throw new Error("PE-UNKW");
         }
       });
+    } catch (error) {
+      throw new Error("PE-UNKW");
+    }
+  }
+
+  async removeMyMarked(post_id: string, user_id: number) {
+    try {
+      await this.db("post_user_marked").where({ post_id, user_id }).delete();
     } catch (error) {
       throw new Error("PE-UNKW");
     }

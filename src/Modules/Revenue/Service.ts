@@ -1,5 +1,5 @@
 import DatabaseConnection from "../../data/connection";
-import { Revenue, RevenuePlan } from "./entity";
+import { Revenue, RevenueDate, RevenuePlan } from "./entity";
 import RevenueModel from "./Model";
 import { RevenueResponse, returnResponse } from "./Responses";
 
@@ -27,7 +27,7 @@ export default class RevenueService {
 
     const dateMax = await this.model.iCanEditThisUser(nutriId, id);
 
-    if (this.hasPassed48Hours(dateMax)) throw new Error("RE-E-NC");
+    //if (this.hasPassed48Hours(dateMax)) throw new Error("RE-E-NC");
 
     const r = await this.model.getRevenuesForClient(id, date);
 
@@ -36,12 +36,14 @@ export default class RevenueService {
     return response;
   }
 
-  async createRevenue(nutriId: number | undefined, data: Revenue | undefined): Promise<RevenueResponse> {
+  async createRevenue(nutriId: number | undefined, data: RevenueDate | undefined): Promise<RevenueResponse> {
     if (!nutriId) throw new Error("NC-E-NN");
     if (!data) throw new Error("NC-E-NN");
 
-    data.initHour = this.toISOStringWithTime(data.initHour);
-    data.finalHour = this.toISOStringWithTime(data.finalHour);
+    console.log(data);
+
+    data.dateInit = this.toISOStringWithTime(data.dateInit);
+    data.dateFinal = this.toISOStringWithTime(data.dateFinal);
 
     const r = await this.model.createRevenue(nutriId, data);
 

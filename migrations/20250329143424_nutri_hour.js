@@ -9,6 +9,7 @@ exports.up = function (knex) {
     table.timestamp("service_init").notNullable();
     table.timestamp("service_final").notNullable();
     table.boolean("void").notNullable().defaultTo(true);
+    table.float("price").notNullable().defaultTo(0);
   });
 };
 

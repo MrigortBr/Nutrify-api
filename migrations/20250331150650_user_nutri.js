@@ -8,8 +8,9 @@ exports.up = function (knex) {
     table.integer("nutri_id").notNullable().references("id").inTable("user_crn").onDelete("CASCADE");
     table.integer("id").notNullable().references("id").inTable("nutri_hour").onDelete("CASCADE").unique();
     table.boolean("finished").notNullable().defaultTo(false);
-    table.integer("rating").notNullable().defaultTo(6);
+    table.float("rating").notNullable().defaultTo(6);
     table.text("description");
+    table.float("price").notNullable().defaultTo(0);
     table.timestamp("created_at").defaultTo(knex.fn.now());
   });
 };

@@ -1,5 +1,5 @@
 import { Knex } from "knex";
-import { NutriLast, NutriOpen, nutriSimple } from "./entity";
+import { ConfigNutri, NutriLast, NutriOpen, nutriSimple } from "./entity";
 
 export default class NutriModel {
   private db: Knex;
@@ -10,6 +10,8 @@ export default class NutriModel {
 
   async listAllNutri(): Promise<nutriSimple[]> {
     try {
+      const knex = this.db; // captura fora da função
+
       const r: nutriSimple[] = await this.db
         .table("user_crn")
         .select(
@@ -17,8 +19,12 @@ export default class NutriModel {
           "user_crn.price",
           "users.picture",
           "users.name",
-          this.db.raw("COALESCE(AVG(user_nutri.rating), 0) as rating"),
-          this.db.raw("COUNT(user_nutri.nutri_id) as number_service"),
+          knex.raw(`
+          COALESCE(AVG(CASE WHEN user_nutri.rating < 6 THEN user_nutri.rating ELSE NULL END), 0) as rating
+        `),
+          knex.raw(`
+          COUNT(CASE WHEN user_nutri.rating < 6 THEN 1 ELSE NULL END) as number_service
+        `),
         )
         .leftJoin("users", "users.id", "user_crn.user_id")
         .leftJoin("user_nutri", "user_nutri.nutri_id", "user_crn.id")
@@ -93,19 +99,16 @@ export default class NutriModel {
         .join("user_crn", "user_crn.id", "user_nutri.nutri_id")
         .leftJoin("users", "users.id", "user_crn.user_id")
         .where("user_nutri.user_id", user_id)
-        .andWhere("user_nutri.finished", false)
-        .andWhere((builder) => {
-          builder
-            .where("nutri_hour.service_init", ">", this.db.raw("CURRENT_TIMESTAMP"))
-            .orWhere("nutri_hour.service_final", ">", this.db.raw("CURRENT_TIMESTAMP"));
-        });
+        .andWhere("user_nutri.finished", false);
     } catch (error) {
-      console.log(error);
       throw new Error("PE-UNKW");
     }
   }
 
-  async getMyServiceLastNutri(user_id: number): Promise<NutriOpen[]> {
+  async getMyServiceLastNutri(user_id: number, date: Date): Promise<NutriOpen[]> {
+    const NewDate = date.toISOString().split("T")[0];
+    const dateFinal = `${NewDate}T23:59:59.999Z`;
+
     try {
       return await this.db("user_nutri")
         .select(
@@ -123,13 +126,19 @@ export default class NutriModel {
         .join("nutri_hour", "nutri_hour.id", "user_nutri.id")
         .leftJoin("users", "users.id", "user_nutri.user_id")
         .where("user_nutri.nutri_id", user_id)
-        .andWhere("user_nutri.finished", true);
+        .andWhere("user_nutri.finished", true)
+        .andWhere((builder) => {
+          builder.where("nutri_hour.service_init", ">=", date).andWhere("nutri_hour.service_final", "<=", dateFinal);
+        });
     } catch (error) {
       throw new Error("PE-UNKW");
     }
   }
 
-  async getMyServiceOpenNutri(user_id: number): Promise<NutriOpen[]> {
+  async getMyServiceOpenNutri(user_id: number, date: Date): Promise<NutriOpen[]> {
+    const NewDate = date.toISOString().split("T")[0];
+    const dateFinal = `${NewDate}T23:59:59.999Z`;
+
     try {
       return await this.db("user_nutri")
         .select(
@@ -148,9 +157,7 @@ export default class NutriModel {
         .where("user_nutri.nutri_id", user_id)
         .andWhere("user_nutri.finished", false)
         .andWhere((builder) => {
-          builder
-            .where("nutri_hour.service_init", ">", this.db.raw("CURRENT_TIMESTAMP"))
-            .orWhere("nutri_hour.service_final", ">", this.db.raw("CURRENT_TIMESTAMP"));
+          builder.where("nutri_hour.service_init", ">=", date).andWhere("nutri_hour.service_final", "<=", dateFinal);
         });
     } catch (error) {
       throw new Error("PE-UNKW");
@@ -158,4 +165,28 @@ export default class NutriModel {
   }
 
   async finishNutri() {}
+
+  async getMyConfigs(id: number, user_id: number): Promise<ConfigNutri> {
+    try {
+      return await this.db("user_crn").select("user_crn.price as price", "user_crn.open as acceptClients").where({ id, user_id }).first();
+    } catch (error) {
+      throw new Error("PE-UNKW");
+    }
+  }
+
+  async updatePrice(id: number, user_id: number, price: number) {
+    try {
+      return await this.db("user_crn").where({ id, user_id }).update({ price });
+    } catch (error) {
+      throw new Error("PE-UNKW");
+    }
+  }
+
+  async updateAcceptClients(id: number, user_id: number, open: boolean) {
+    try {
+      return await this.db("user_crn").where({ id, user_id }).update({ open });
+    } catch (error) {
+      throw new Error("PE-UNKW");
+    }
+  }
 }

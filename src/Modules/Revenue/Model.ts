@@ -1,5 +1,5 @@
 import { Knex } from "knex";
-import { Revenue, RevenuePlan } from "./entity";
+import { Revenue, RevenueDate, RevenuePlan } from "./entity";
 
 export default class RevenueModel {
   private db: Knex;
@@ -52,16 +52,16 @@ export default class RevenueModel {
     }
   }
 
-  async createRevenue(nutri_id: number, data: Revenue): Promise<number> {
+  async createRevenue(nutri_id: number, data: RevenueDate): Promise<number> {
     try {
       const r: { id: number }[] = await this.db("nutri_revenue")
         .insert({
           nutri_id: nutri_id,
           picture: data.picture,
           name: data.name,
-          nameType: data.typeRevenue,
-          dateInit: data.initHour,
-          dateFinal: data.finalHour,
+          nameType: data.nameType,
+          dateInit: data.dateInit,
+          dateFinal: data.dateFinal,
           kcal: data.kcal,
           recipe: data.recipe,
         })
@@ -69,6 +69,7 @@ export default class RevenueModel {
 
       return r[0].id;
     } catch (error) {
+      console.log(error);
       if (typeof (error as { code: string }).code == "string") {
         const code = (error as { code: string }).code;
         if (code == "23505") throw new Error("FC-E-UHFU");

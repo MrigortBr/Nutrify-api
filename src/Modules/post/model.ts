@@ -26,7 +26,6 @@ export default class PostModel {
 
   async insertPostAndMarked(data: PublishData, userId: number) {
     try {
-      console.log("try");
       return await this.db.transaction(async (db) => {
         const postAdd: PublishDataToSend = {
           caption: data.caption,
@@ -96,16 +95,17 @@ export default class PostModel {
 
         await db("post_user_marked").delete().where({ post_id: postId });
 
-        await db("post_user_marked").insert(
-          usersMarked.map((userId) => ({
-            user_id: userId,
-            post_id: postId,
-          })),
-        );
+        if (usersMarked.length > 0) {
+          await db("post_user_marked").insert(
+            usersMarked.map((userId) => ({
+              user_id: userId,
+              post_id: postId,
+            })),
+          );
+        }
       });
     } catch (error) {
       console.log(error);
-
       throw new Error("PE-UNKW");
     }
   }
@@ -170,7 +170,7 @@ export default class PostModel {
             "users.username",
             "users.picture as pictureUser",
             "post.post_commentable as commentState",
-            db.raw("COUNT(DISTINCT post_like.user_id) as likes"),
+            db.raw("COUNT(post_like.post_id) as likes"),
           ])
           .leftJoin("users", "users.id", "post.user_id")
           .leftJoin("post_like", "post_like.post_id", "post.id")

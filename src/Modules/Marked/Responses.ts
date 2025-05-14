@@ -10,4 +10,5 @@ export type MarkedResponse = {
 
 export const returnResponse: ReturnResponse<MarkedResponse> = {
   FC_PR_PML: { message: "Usuario seguido com sucesso!", description: ".", statusCode: 200 }, //Marked controller - Project Response - Posts Marked Listed
+  FC_PR_PUL: { message: "Você foi desmarcado da publicação com sucesso!", description: ".", statusCode: 200 }, //Marked controller - Project Response - Posts Unmarked Listed
 };

@@ -23,10 +23,10 @@ export default class HomeController {
     }
   }
 
-  @Get("/fallow", [Authorization])
+  @Get("/follow", [Authorization])
   async getFallow(req: RequestAuthorized, res: Response, next: NextFunction) {
     try {
-      const response = await this.service.getFallow(req.user?.id || 0);
+      const response = await this.service.getFollow(req.user?.id || 0);
       res.json(response).status(response.statusCode);
     } catch (error) {
       next(error);

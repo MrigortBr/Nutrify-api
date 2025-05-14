@@ -1,11 +1,11 @@
 import { descErrors, DescErrors } from "../../middlewares/errorHandler";
 
-const errosLogin: DescErrors = {
-  ERR: {
-    message: "Informe um usuario para seguir.",
-    description: "Voce deve informar um @ de usuario para seguir.",
+const errosContact: DescErrors = {
+  reload: {
+    message: "Ocorreu um erro desconhecido, tente novamente mais tarde",
+    description: "",
     statusCode: 400,
   },
 };
 
-Object.assign(descErrors, errosLogin);
+Object.assign(descErrors, errosContact);

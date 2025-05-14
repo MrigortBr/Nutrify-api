@@ -7,7 +7,7 @@ exports.up = function (knex) {
     table.increments("id").primary();
     table.integer("user_id_one").notNullable().references("id").inTable("users").onDelete("CASCADE");
     table.integer("user_id_two").notNullable().references("id").inTable("users").onDelete("CASCADE");
-    table.string("message").notNullable();
+    table.text("message").notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.string("identifier_chat").notNullable();
     table.boolean("read").notNullable().defaultTo(false);

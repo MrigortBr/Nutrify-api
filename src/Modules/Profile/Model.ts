@@ -74,7 +74,8 @@ export default class ProfileModel {
           .select([
             "post.id",
             "post.picture",
-            db.raw("COUNT(DISTINCT post_like.post_id) as likes"),
+            db.raw("COUNT(post_like.post_id) as likes"),
+
             db.raw("COUNT(DISTINCT post_comments.post_id) as comments"),
           ])
           .groupBy("post.id");

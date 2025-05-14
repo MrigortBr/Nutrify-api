@@ -24,4 +24,14 @@ export default class MarkedService {
     response.picture = r;
     return response;
   }
+
+  async removeMyMarked(postid: string | undefined, userId: number | undefined): Promise<MarkedResponse> {
+    if (!userId) throw new Error("NC-E-NN");
+    if (!postid) throw new Error("NC-E-NN");
+
+    const r = await this.model.removeMyMarked(postid, userId);
+
+    const response = returnResponse["FC_PR_PUL"];
+    return response;
+  }
 }

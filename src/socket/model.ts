@@ -2,6 +2,18 @@ import { Knex } from "knex";
 import DatabaseConnection from "../data/connection";
 import { dataHistoryDBA, searchProfileResponse } from "./types";
 import { User } from "../entities/users";
+import { Message } from "../entities/ChatEntity";
+
+type Notification = {
+  id: number;
+  user_one: number;
+  user: number;
+  message: string;
+  link: string;
+  type: "chat" | "post" | "profile"; // ajuste conforme os tipos possíveis
+  created_at: string; // ou `Date` se você estiver convertendo
+  read: boolean;
+};
 
 function getMinMax(num1: number, num2: number): string {
   const menorNumero = Math.min(num1, num2);
@@ -51,7 +63,8 @@ export default class SocketModel {
       return await this.db("user_message_user")
         .select("*")
         .where({ user_id_one, user_id_two })
-        .orWhere({ user_id_one: user_id_two, user_id_two: user_id_one });
+        .orWhere({ user_id_one: user_id_two, user_id_two: user_id_one })
+        .orderBy("user_message_user.created_at");
     } catch (error) {
       throw new Error("PE-UNKW");
     }
@@ -62,7 +75,8 @@ export default class SocketModel {
       return await this.db("user_message_nutri")
         .select("*")
         .where({ user_id_one, user_id_two })
-        .orWhere({ user_id_one: user_id_two, user_id_two: user_id_one });
+        .orWhere({ user_id_one: user_id_two, user_id_two: user_id_one })
+        .orderBy("user_message_nutri.created_at");
     } catch (error) {
       throw new Error("PE-UNKW");
     }
@@ -152,6 +166,15 @@ export default class SocketModel {
     }
   }
 
+  async getRatingById(id: number): Promise<{ rating: number; description: string }> {
+    try {
+      return await this.db("user_nutri").select("user_nutri.rating", "user_nutri.description").where({ id: id }).first();
+    } catch (error) {
+      console.log(error);
+      throw new Error("PE-UNKW");
+    }
+  }
+
   async finishNutri(id: number, finishService: boolean, rating: number, description: string, nutri_id: string) {
     try {
       await this.db("user_nutri")
@@ -164,6 +187,36 @@ export default class SocketModel {
     } catch (error) {
       console.log(error);
       throw new Error("PE-UNKW");
+    }
+  }
+
+  async getHistoryForIA(userid: number): Promise<Message[]> {
+    try {
+      return await this.db("user_message_user").where({ identifier_chat: `1,${userid}` });
+    } catch (error) {
+      throw new Error("PE-UNKW");
+    }
+  }
+
+  async addNotification(user_one: number, user: number, type: "chat" | "post" | "profile", link: string, message: string) {
+    try {
+      return await this.db("user_notification").insert({ user_one, user, type, link, message });
+    } catch (error) {}
+  }
+
+  async getNotification(user: number): Promise<Notification[]> {
+    try {
+      return await this.db("user_notification").select("*").where({ user: user }).orderBy("user_notification.created_at", "desc");
+    } catch (error) {
+      throw new Error("PE-UNKW");
+    }
+  }
+
+  async readAll(user: number) {
+    try {
+      return await this.db("user_notification").update({ read: true }).where({ user: user });
+    } catch (error) {
+      console.log(error);
     }
   }
 }

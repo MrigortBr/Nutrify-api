@@ -14,7 +14,6 @@ export default class PostService {
 
   async publish(data: PublishData, idUser: number): Promise<responsePost> {
     if (data.markers.length > 0) {
-      console.log("erro aqui");
       const res = await this.model.getUserByUsername(data.markers);
       data.idMarkers = res;
     }

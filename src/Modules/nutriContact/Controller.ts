@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { Controller, Get, Post } from "../../base/routerDecorator";
+import { Controller, Get, Post, Put } from "../../base/routerDecorator";
 import Authorization from "../../middlewares/authorization/Middleware";
 import AuthorizationNutri from "../../middlewares/authorizationNutri/Middleware";
 import { RequestAuthorized } from "../../middlewares/authorizationNutri/type";
@@ -61,11 +61,40 @@ export default class BaseController {
   @Get("/myServices", [Authorization, AuthorizationNutri])
   async getMyServicesNutri(req: RequestAuthorized, res: Response, next: NextFunction) {
     try {
-      const last = await this.service.getMyServiceLastNutri(req.nutriId);
-      const open = await this.service.getMyServiceOpenNutri(req.nutriId);
+      const { date } = req.query;
+
+      const last = await this.service.getMyServiceLastNutri(req.nutriId, date);
+      const open = await this.service.getMyServiceOpenNutri(req.nutriId, date);
       const response = returnResponse["NC_PR_HM"];
       response.servicesLast = last;
       response.servicesOpen = open;
+      res.json(response).status(response.statusCode);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  @Get("/Configs", [Authorization, AuthorizationNutri])
+  async getMyConfigs(req: RequestAuthorized, res: Response, next: NextFunction) {
+    try {
+      const data = await this.service.getMyConfigs(req.nutriId, req.user?.id);
+      const response = returnResponse["NC_PR_CR"];
+      response.acceptClients = data.acceptClients;
+      response.price = data.price;
+      res.json(response).status(response.statusCode);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  @Put("/Configs", [Authorization, AuthorizationNutri])
+  async updateMyConfigs(req: RequestAuthorized, res: Response, next: NextFunction) {
+    try {
+      const { acceptClients, price } = req.body;
+      const nutriId = req.nutriId;
+      const userId = req.user?.id;
+      const data = await this.service.updateMyConfigs(nutriId, userId, price, acceptClients);
+      const response = returnResponse["NC_PR_CU"];
       res.json(response).status(response.statusCode);
     } catch (error) {
       next(error);

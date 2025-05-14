@@ -32,3 +32,8 @@ export type NutriOpen = {
   finished: boolean;
   rating: number;
 };
+
+export type ConfigNutri = {
+  acceptClients: boolean;
+  price: number;
+};

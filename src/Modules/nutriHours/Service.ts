@@ -27,17 +27,26 @@ export default class NutriHourService {
     return await this.model.getForDateAndId(newDate, nutriId);
   }
 
+  async Overview(nutriId: number | undefined) {
+    if (!nutriId) throw new Error("NC-E-NN");
+    return await this.model.overview(nutriId);
+  }
+
   async updateHoursById(nutriId: number | undefined, data: NutriHour) {
     if (!nutriId) throw new Error("NC-E-NN");
-
     return await this.model.updateHoursById(nutriId, data);
   }
 
   async createHours(nutriId: number | undefined, data: NutriHour) {
     if (!nutriId) throw new Error("NC-E-NN");
     if (!nutriId) throw new Error("NC-E-NN");
+    let value = data.price;
 
-    return await this.model.createHours(nutriId, data);
+    if (data.price == undefined || value == 0) {
+      value = (await this.model.getValueForNutri(nutriId)).price;
+    }
+
+    return await this.model.createHours(nutriId, data, value);
   }
 
   async deleteHours(nutriId: number | undefined, id: string | undefined) {

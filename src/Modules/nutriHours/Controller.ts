@@ -30,6 +30,22 @@ export default class NutriHourController {
     }
   }
 
+  @Get("/overview/data", [Authorization, AuthorizationNutri])
+  async Overview(req: RequestAuthorized, res: Response, next: NextFunction) {
+    try {
+      const nutriId = req.nutriId;
+
+      const r = await this.service.Overview(nutriId);
+
+      const response = returnResponse["NC_PR_OV"];
+      response.nutriOverview = r;
+      res.json(response).status(response.statusCode);
+    } catch (error) {
+      console.log(error);
+      next(error);
+    }
+  }
+
   @Get("/:date/:id/", [Authorization])
   async GetDateForNutriId(req: RequestAuthorized, res: Response, next: NextFunction) {
     try {

@@ -1,4 +1,5 @@
 import DatabaseConnection from "../../data/connection";
+import { SimplePost } from "../../entities/SimplePost";
 import GeralService from "../_Geral/Service";
 import { responsePost, returnResponse } from "../post/Responses";
 import HomeModel from "./model";
@@ -26,9 +27,24 @@ export default class HomeService {
     return response;
   }
 
-  async getFallow(userid: number): Promise<responsePost> {
-    const r = await this.geralService.getIdByUsername("ttt");
+  async getFollow(userid: number): Promise<responsePost> {
+    const r = await this.model.getFollow(userid);
+    const data: SimplePost[] = [];
+
+    await Promise.all(
+      r.map(async (element) => {
+        try {
+          const visibility = await this.geralService.userCanViewAndCanCommentNoBreak(element.id || "", userid);
+          if (visibility) {
+            element.iCanComment = visibility.iCanComment;
+            data.push(element);
+          } else {
+          }
+        } catch (error) {}
+      }),
+    );
     const response = returnResponse["PC_PR_PCC"];
+    response.simplePost = data;
     return response;
   }
 }

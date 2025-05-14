@@ -4,13 +4,15 @@ export class NutriHour {
   service_init: Date;
   service_final: Date;
   void: boolean;
+  price: number;
 
-  constructor(nutri_id: number, service_init: Date, service_final: Date, voidStatus: boolean = true, id?: number) {
+  constructor(nutri_id: number, service_init: Date, service_final: Date, voidStatus: boolean = true, id?: number, price: number = 0) {
     this.id = id;
     this.nutri_id = nutri_id;
     this.service_init = service_init;
     this.service_final = service_final;
     this.void = voidStatus;
+    this.price = price;
   }
 
   isValid(): boolean {
@@ -31,3 +33,9 @@ export class NutriHour {
     };
   }
 }
+
+export type NutriOverview = {
+  sales: number;
+  services: number;
+  rating: number;
+};

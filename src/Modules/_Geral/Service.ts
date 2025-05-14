@@ -28,6 +28,10 @@ export default class GeralService {
     return await this.model.userCanViewAndCanComment(postId, userId);
   }
 
+  async userCanViewAndCanCommentNoBreak(postId: string, userId: number): Promise<iCanInPost | undefined> {
+    return await this.model.userCanViewAndCanCommentNoBreak(postId, userId);
+  }
+
   async getVisibilityForProfile(profileId: number, userId: number) {
     return this.model.getVisibilityForProfile(profileId, userId);
   }

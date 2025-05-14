@@ -5,7 +5,7 @@ import Authorization from "../../middlewares/authorization/Middleware";
 import RevenueService from "./Service";
 import "./erros";
 import AuthorizationNutri from "../../middlewares/authorizationNutri/Middleware";
-import { Revenue, RevenuePlan } from "./entity";
+import { Revenue, RevenueDate, RevenuePlan } from "./entity";
 
 @Controller("/revenue")
 export default class RevenueController {
@@ -42,7 +42,7 @@ export default class RevenueController {
   async createRevenue(req: RequestAuthorized, res: Response, next: NextFunction) {
     try {
       const nutriId = req.nutriId;
-      const data: Revenue = req.body.revenue;
+      const data: RevenueDate = req.body.revenue;
       const result = await this.service.createRevenue(nutriId, data);
       res.send(result).status(result.statusCode);
     } catch (error) {
