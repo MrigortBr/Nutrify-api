@@ -17,7 +17,6 @@ export default class PlanService {
 
   async getPlan(userid: number, searchDate: string): Promise<PlanResponse> {
     const plans = await this.model.getByUsername(userid, searchDate);
-
     const response = returnResponse["PC_PR_PLS"];
     response.plans = plans;
 

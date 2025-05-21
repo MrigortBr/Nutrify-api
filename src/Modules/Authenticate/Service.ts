@@ -1,4 +1,4 @@
-import { generateKeyJWT } from "../../base/ServiceAll";
+import { decodeKeyVerify, generateKeyJWT, generateKeyVerify } from "../../base/ServiceAll";
 import { ReturnResponse } from "../../base/responsesData";
 import DatabaseConnection from "../../data/connection";
 import { RegisterUser } from "../../entities/RegisterUser";
@@ -7,7 +7,6 @@ import { CRN } from "../../entities/users";
 import { UserModel } from "./Model";
 import { responseLogin, returnResponse } from "./Responses";
 import "./erros";
-import jwt from "jsonwebtoken";
 
 export class AuthenticateService {
   private model: UserModel;
@@ -39,21 +38,28 @@ export class AuthenticateService {
     return response;
   }
 
-  async register(name: string, email: string, password: string) {
+  async register(name: string, email: string, password: string): Promise<{ response: responseLogin } & { id: number }> {
     const registerUser: RegisterUser = await RegisterUser.create({
       email: email,
       name: name,
       password: password,
     });
     const idUser = await this.model.registerUser(registerUser);
-    registerUser.sayWelcome();
-    const jwtKey = await generateKeyJWT(idUser.id);
+    const jwtKey = await generateKeyVerify(idUser.id, name, email, "user");
+    registerUser.sayVerify(jwtKey);
     const response = returnResponse["AC_PR_RASU"];
     response.jwt = jwtKey;
-    return response;
+    return { response, id: idUser.id };
   }
 
-  async registerNutri(name: string, email: string, password: string, crn: CRN, typeCRN: string) {
+  async verifyUserVerification(id: number) {
+    const r = await this.model.userVerifyEmail(id);
+    if (!r.checked) {
+      this.model.deleteUser(id);
+    }
+  }
+
+  async registerNutri(name: string, email: string, password: string, crn: CRN, typeCRN: string): Promise<{ response: responseLogin } & { id: number }>  {
     const registerUser: RegisterUser = await RegisterUser.create({
       email: email,
       name: name,
@@ -61,10 +67,37 @@ export class AuthenticateService {
     });
     const idUser = await this.model.registerNutri(registerUser, crn, typeCRN);
 
-    registerUser.sayWelcome();
-    const jwtKey = await generateKeyJWT(idUser.id);
+    const jwtKey = await generateKeyVerify(idUser.id, name, email, "nutri");
+    registerUser.sayVerify(jwtKey);
     const response = returnResponse["AC_PR_RASU"];
     response.jwt = jwtKey;
+    return {response: response, id: idUser.id};
+  }
+
+  async verifyEmail(token: string | string[] | undefined) {
+    if (typeof token != "string") {
+      throw new Error("PE-CIVL-PW");
+    }
+
+    const data = await decodeKeyVerify(token);
+
+    await this.model.verifyEmail(data.id, data.name, data.email);
+
+    const userObject: RegisterUser = await RegisterUser.create({
+      email: data.email,
+      name: data.name,
+      password: "pwd",
+    });
+
+
+    const jwt = await generateKeyJWT(data.id)
+    
+    userObject.sayWelcome();
+
+    const response = returnResponse["AC_PR_EA"];
+    response.jwt = jwt;
+    response.type = data.type;
+
     return response;
   }
 }

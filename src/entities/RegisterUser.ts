@@ -58,6 +58,15 @@ class RegisterUser implements IRegisterUser {
       }).sendEmail();
     }
   }
+
+    async sayVerify(token: string) {
+    if (this.email != undefined) {
+      new EmailModule(this.email, "verify.html", "Verificação de email", {
+        name: this.name,
+        link: `${process.env.PAGE_VERIFY_EMAIL}${token}`,
+      }).sendEmail();
+    }
+  }
 }
 
 export { RegisterUser, IRegisterUser };

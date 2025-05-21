@@ -34,6 +34,7 @@ exports.up = function (knex) {
       })
       .defaultTo("*")
       .notNullable();
+    table.boolean("checked").defaultTo(false).notNullable();
   });
 };
 

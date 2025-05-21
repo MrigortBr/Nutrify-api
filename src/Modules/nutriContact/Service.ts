@@ -15,12 +15,14 @@ export default class NutriService {
     return r;
   }
 
-  async MarkInquiry(userId: number | undefined, nutriId: number | undefined, hourid: number | undefined) {
+  async MarkInquiry(userId: number | undefined, nutriId: number | undefined, hourid: number | undefined, price: string | undefined) {
     if (!userId) throw new Error("NC-E-NN");
     if (!nutriId) throw new Error("NC-E-NN");
     if (!hourid) throw new Error("NC-E-NN");
+    if (!price) throw new Error("NC-E-NN");
 
-    const r = await this.model.MarkInquiry(userId, nutriId, hourid);
+
+    const r = await this.model.MarkInquiry(userId, nutriId, hourid, Number(price));
     return r;
   }
 

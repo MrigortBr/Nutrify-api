@@ -76,6 +76,7 @@ export default class PlanModel {
           dateFinal: plan.dateFinal,
           name: plan.name,
           marked: false,
+          kcal: plan.kcal
         })
         .returning("id");
 

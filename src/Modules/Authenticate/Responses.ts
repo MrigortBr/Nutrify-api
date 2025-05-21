@@ -23,4 +23,12 @@ export const returnResponse: ReturnResponse<responseLogin> = {
     statusCode: 200,
     type: "user",
   }, //Authenticate controller - Project Response - Login Account Successful
+    AC_PR_EA: {
+    message: "Conta verificada com sucesso!",
+    description: "Sua conta foi verificada.",
+    jwt: "",
+    statusCode: 200,
+    type: "user",
+  }, //Authenticate controller - Project Response - Email Authenticate
 };
+

@@ -11,7 +11,7 @@ class UserModel {
 
   async getUserByEmail(email: string): Promise<IUser> {
     try {
-      const user = (await this.db("users").where({ email }).first()) as IUser;
+      const user = (await this.db("users").where({ email, checked: true}).first()) as IUser;
 
       if (!user) throw new Error("PE-IELL-PW");
 
@@ -40,6 +40,47 @@ class UserModel {
     try {
       const result = await this.db("users").insert(user).returning("id");
       return result[0];
+    } catch (error) {
+      console.log(error);
+      if (typeof (error as { code: string }).code == "string") {
+        const code = (error as { code: string }).code;
+        if (code == "23505") throw new Error("PG-23505-EM");
+      }
+      throw new Error("PE-UNKW");
+    }
+  }
+
+  async userVerifyEmail(id: number): Promise<{ checked: boolean }> {
+    try {
+      const result = await this.db("users").select("checked").where({ id }).first();
+      return result;
+    } catch (error) {
+      console.log(error);
+      if (typeof (error as { code: string }).code == "string") {
+        const code = (error as { code: string }).code;
+        if (code == "23505") throw new Error("PG-23505-EM");
+      }
+      console.log(error);
+      throw new Error("PE-UNKW");
+    }
+  }
+
+  async verifyEmail(id: number, name: string, email: string) {
+    try {
+      await this.db("users").update({ checked: true }).where({ checked: false, id, name, email });
+    } catch (error) {
+      if (typeof (error as { code: string }).code == "string") {
+        const code = (error as { code: string }).code;
+        if (code == "23505") throw new Error("PG-23505-EM");
+      }
+      console.log(error);
+      throw new Error("PE-UNKW");
+    }
+  }
+
+  async deleteUser(id: number) {
+    try {
+      await this.db("users").delete().where({ id });
     } catch (error) {
       console.log(error);
       if (typeof (error as { code: string }).code == "string") {

@@ -41,13 +41,14 @@ export default class NutriModel {
     }
   }
 
-  async MarkInquiry(userId: number, nutri_id: number, hourid: number) {
+  async MarkInquiry(userId: number, nutri_id: number, hourid: number, price: number) {
     try {
       this.db.transaction(async (db) => {
         await db("user_nutri").insert({
           user_id: userId,
           nutri_id: nutri_id,
           id: hourid,
+          price: price
         });
 
         await db("nutri_hour").update({ void: false }).where({ id: hourid });
@@ -67,6 +68,7 @@ export default class NutriModel {
           "nutri_hour.service_init",
           "nutri_hour.service_final",
           "users.name",
+          "user_nutri.price",
           "user_nutri.finished",
           "users.picture",
           "user_nutri.rating",

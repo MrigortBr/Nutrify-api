@@ -34,5 +34,7 @@ export interface SimplePost {
   userMark: { username: string; picture: string }[];
   likes: number;
   commentsNumber: number;
+    commentsnumber: number;
+
   comments?: comments[];
 }

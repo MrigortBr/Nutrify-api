@@ -20,6 +20,12 @@ const errosLogin: DescErrors = {
   "PE-IFLL-PW": { message: "Campos invalidos.", description: "Preencha o campo de senha para realizar o login.", statusCode: 400 },
   "PE-IPLL-PW": { message: "Conta não encontrada.", description: "A senha informada está incorreta.", statusCode: 400 },
   "PE-IELL-PW": { message: "Conta não encontrada.", description: "O email informado está incorreto.", statusCode: 400 },
+  "PE-CIVL-PW": {
+    message: "Código fornecido e inválido!",
+    description: "O código fornecido pelo usuário para verificação de e-mail e falso .",
+    statusCode: 400,
+  },
+
   "PE-NPGJ": {
     message: "Não foi possivel realizar o login, tente novamente mais tarde.",
     description: "Houve um erro ao gerar o codigo de login nós estamos verificando, por favor tente mais tarde",

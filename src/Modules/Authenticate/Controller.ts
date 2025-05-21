@@ -1,4 +1,4 @@
-import { Controller, Post } from "../../base/routerDecorator";
+import { Controller, Get, Post } from "../../base/routerDecorator";
 import { Response, Request, NextFunction } from "express";
 import { AuthenticateService } from "./Service";
 
@@ -25,8 +25,18 @@ export class AuthenticateController {
   async register(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password, name } = req.body;
-      const response = await this.service.register(name, email, password);
+      const { response, id } = await this.service.register(name, email, password);
       res.json(response).status(response.statusCode);
+      await new Promise((resolve) =>
+        setTimeout(async () => {
+          try {
+            await this.service.verifyUserVerification(id);
+          } catch (error) {
+            console.log(error);
+          }
+          resolve;
+        }, (30 * 60) * 1000),
+      );
     } catch (error) {
       next(error);
     }
@@ -36,7 +46,30 @@ export class AuthenticateController {
   async registerNutritionist(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password, name, crn, typeCRN } = req.body;
-      const response = await this.service.registerNutri(name, email, password, crn, typeCRN);
+      const {response, id} = await this.service.registerNutri(name, email, password, crn, typeCRN);
+      res.json(response).status(response.statusCode);
+            await new Promise((resolve) =>
+        setTimeout(async () => {
+          try {
+            await this.service.verifyUserVerification(id);
+          } catch (error) {
+            console.log(error);
+          }
+          resolve;
+        }, (30 * 60) * 1000),
+      );
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  @Get("/verify")
+  async VerifyUser(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { token } = req.headers;
+
+      const response = await this.service.verifyEmail(token);
+
       res.json(response).status(response.statusCode);
     } catch (error) {
       next(error);

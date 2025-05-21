@@ -31,9 +31,9 @@ export default class BaseController {
   @Post("/mark", [Authorization])
   async MarkInquiry(req: RequestAuthorized, res: Response, next: NextFunction) {
     try {
-      const { nutriId, hourId } = req.body;
-
-      const r = await this.service.MarkInquiry(req.user?.id, nutriId, hourId);
+      const { nutriId, hourId, price } = req.body;
+      
+      const r = await this.service.MarkInquiry(req.user?.id, nutriId, hourId, price);
 
       const response = returnResponse["NC_PR_HM"];
       res.json(response).status(response.statusCode);
