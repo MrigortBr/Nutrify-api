@@ -75,8 +75,6 @@ export class ICanSeeModel {
         userid: 0,
       };
     } catch (e) {
-      console.log(e);
-
       const error = e as Error;
       throw new Error(error.message);
     }

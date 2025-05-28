@@ -142,4 +142,12 @@ export default class ProfileModel {
       throw new Error("PE-UNKW");
     }
   }
+
+  async getUserById(id: number): Promise<{ email: string; password: string }> {
+    try {
+      return await this.db("users").select(["email", "password"]).where({ id }).first();
+    } catch (e) {
+      throw new Error("PE-UNKW");
+    }
+  }
 }

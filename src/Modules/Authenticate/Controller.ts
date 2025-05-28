@@ -28,14 +28,15 @@ export class AuthenticateController {
       const { response, id } = await this.service.register(name, email, password);
       res.json(response).status(response.statusCode);
       await new Promise((resolve) =>
-        setTimeout(async () => {
-          try {
-            await this.service.verifyUserVerification(id);
-          } catch (error) {
-            console.log(error);
-          }
-          resolve;
-        }, (30 * 60) * 1000),
+        setTimeout(
+          async () => {
+            try {
+              await this.service.verifyUserVerification(id);
+            } catch (error) {}
+            resolve;
+          },
+          30 * 60 * 1000,
+        ),
       );
     } catch (error) {
       next(error);
@@ -46,17 +47,20 @@ export class AuthenticateController {
   async registerNutritionist(req: Request, res: Response, next: NextFunction) {
     try {
       const { email, password, name, crn, typeCRN } = req.body;
-      const {response, id} = await this.service.registerNutri(name, email, password, crn, typeCRN);
+      const { response, id } = await this.service.registerNutri(name, email, password, crn, typeCRN);
       res.json(response).status(response.statusCode);
-            await new Promise((resolve) =>
-        setTimeout(async () => {
-          try {
-            await this.service.verifyUserVerification(id);
-          } catch (error) {
-            console.log(error);
-          }
-          resolve;
-        }, (30 * 60) * 1000),
+      await new Promise((resolve) =>
+        setTimeout(
+          async () => {
+            try {
+              await this.service.verifyUserVerification(id);
+            } catch (error) {
+              console.log(error);
+            }
+            resolve;
+          },
+          30 * 60 * 1000,
+        ),
       );
     } catch (error) {
       next(error);

@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs";
 import { hashPasswordByPassword, isValidEmail } from "../../base/ServiceAll";
 import DatabaseConnection from "../../data/connection";
 import { updateUserPrivacy } from "../../entities/ConfigEntity";
@@ -56,9 +57,22 @@ export default class ProfileService {
     return response;
   }
 
-  //BUG Crash on error
   async updateConfigUser(idUser: number, data: updateUserPrivacy): Promise<responseProfile> {
     const response = returnResponse["PC_PR_PCU"];
+
+    const user = await this.model.getUserById(idUser);
+
+    if (!user) {
+      throw new Error("PC-E-AF");
+    }
+
+    const { password, email } = user;
+
+    const passwordIsValid = await bcrypt.compare(data.mypassword ?? "", password);
+
+    if (!passwordIsValid) {
+      throw new Error("PC-E-PW");
+    }
 
     const newData: updateUserPrivacy = {
       whosendmessage: data.whosendmessage,

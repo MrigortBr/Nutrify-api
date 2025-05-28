@@ -11,6 +11,16 @@ const errosLogin: DescErrors = {
     description: "",
     statusCode: 400,
   },
+  "PC-E-AF": {
+    message: "Conta não encontrada.",
+    description: "Conta informada nao encontrada.",
+    statusCode: 400,
+  },
+  "PC-E-PW": {
+    message: "Senha Invalida.",
+    description: ".",
+    statusCode: 400,
+  },
 };
 
 Object.assign(descErrors, errosLogin);

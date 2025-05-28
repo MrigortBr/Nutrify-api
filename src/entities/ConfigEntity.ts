@@ -24,4 +24,5 @@ export class updateUserPrivacy {
   whoseemyplanning?: PrivacyLevel;
   password?: string;
   email?: string;
+  mypassword?: string;
 }

@@ -11,7 +11,7 @@ class UserModel {
 
   async getUserByEmail(email: string): Promise<IUser> {
     try {
-      const user = (await this.db("users").where({ email, checked: true}).first()) as IUser;
+      const user = (await this.db("users").where({ email, checked: true }).first()) as IUser;
 
       if (!user) throw new Error("PE-IELL-PW");
 
@@ -27,7 +27,6 @@ class UserModel {
       const result = await this.db("user_crn").where({ user_id: userid }).select("id");
       return result[0];
     } catch (error) {
-      console.log(error);
       if (typeof (error as { code: string }).code == "string") {
         const code = (error as { code: string }).code;
         if (code == "23505") throw new Error("PG-23505-EM");

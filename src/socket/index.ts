@@ -205,9 +205,7 @@ export class Socket {
             if (userSendedToken) {
               socket.to(userSendedToken.getIdToken()).emit(`${data.id}finished`);
             }
-          } catch (error) {
-            console.log("ERRRRRRO");
-          }
+          } catch (error) {}
         },
       );
 
@@ -281,9 +279,7 @@ export class Socket {
           if (userSendedToken) {
             socket.to(userSendedToken.getIdToken()).emit(`${data.id}finished`);
           }
-        } catch (error) {
-          console.log("ERRRRRRO");
-        }
+        } catch (error) {}
       });
     });
   }
