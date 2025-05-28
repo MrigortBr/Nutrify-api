@@ -273,6 +273,18 @@ export class Socket {
           await this.model.readAll(myId.id);
         }
       });
+
+      socket.on("finishByNutri", async (data: { id: number; nutriId: string; username: string }) => {
+        try {
+          await this.model.finishByNutri(data.id, data.nutriId);
+          const userSendedToken = this.dbSocket.findUserTokenByUsername(data.username);
+          if (userSendedToken) {
+            socket.to(userSendedToken.getIdToken()).emit(`${data.id}finished`);
+          }
+        } catch (error) {
+          console.log("ERRRRRRO");
+        }
+      });
     });
   }
 }

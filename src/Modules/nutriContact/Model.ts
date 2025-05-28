@@ -48,7 +48,7 @@ export default class NutriModel {
           user_id: userId,
           nutri_id: nutri_id,
           id: hourid,
-          price: price
+          price: price,
         });
 
         await db("nutri_hour").update({ void: false }).where({ id: hourid });
@@ -137,10 +137,7 @@ export default class NutriModel {
     }
   }
 
-  async getMyServiceOpenNutri(user_id: number, date: Date): Promise<NutriOpen[]> {
-    const NewDate = date.toISOString().split("T")[0];
-    const dateFinal = `${NewDate}T23:59:59.999Z`;
-
+  async getMyServiceOpenNutri(user_id: number, startUtc: string, endUtc: string): Promise<NutriOpen[]> {
     try {
       return await this.db("user_nutri")
         .select(
@@ -159,7 +156,7 @@ export default class NutriModel {
         .where("user_nutri.nutri_id", user_id)
         .andWhere("user_nutri.finished", false)
         .andWhere((builder) => {
-          builder.where("nutri_hour.service_init", ">=", date).andWhere("nutri_hour.service_final", "<=", dateFinal);
+          builder.where("nutri_hour.service_init", ">=", startUtc).andWhere("nutri_hour.service_final", "<=", endUtc);
         });
     } catch (error) {
       throw new Error("PE-UNKW");

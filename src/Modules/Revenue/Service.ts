@@ -20,14 +20,20 @@ export default class RevenueService {
     return response;
   }
 
-  async getRevenuesForClient(nutriId: number | undefined, id: string | undefined, date: string | undefined): Promise<RevenueResponse> {
+  async getRevenuesForClient(
+    nutriId: number | undefined,
+    userId: string | undefined,
+    date: string | undefined,
+    id: string | undefined,
+  ): Promise<RevenueResponse> {
     if (!nutriId) throw new Error("NC-E-NN");
     if (!id) throw new Error("NC-E-NN");
     if (!date) throw new Error("NC-E-NN");
+    if (!userId) throw new Error("NC-E-NN");
 
-    const dateMax = await this.model.iCanEditThisUser(nutriId, id);
+    const dateMax = await this.model.iCanEditThisClient(nutriId, userId, id);
 
-    //if (this.hasPassed48Hours(dateMax)) throw new Error("RE-E-NC");
+    if (this.hasPassed48Hours(dateMax)) throw new Error("RE-E-NC");
 
     const r = await this.model.getRevenuesForClient(id, date);
 
@@ -58,7 +64,7 @@ export default class RevenueService {
     if (!id) throw new Error("NC-E-NN");
 
     const dateMax = await this.model.iCanEditThisUser(nutriId, id);
-    if (this.hasPassed48Hours(dateMax)) throw new Error("RE-E-NC");
+    //if (this.hasPassed48Hours(dateMax)) throw new Error("RE-E-NC");
 
     await this.model.createRevenueUser(nutriId, data, id);
     const response = returnResponse["RC_PR_NC"];

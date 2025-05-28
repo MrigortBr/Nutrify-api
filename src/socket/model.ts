@@ -190,6 +190,19 @@ export default class SocketModel {
     }
   }
 
+  async finishByNutri(id: number, nutri_id: string) {
+    try {
+      await this.db("user_nutri")
+        .update({
+          finished: true,
+        })
+        .where({ nutri_id: nutri_id, id: id });
+    } catch (error) {
+      console.log(error);
+      throw new Error("PE-UNKW");
+    }
+  }
+
   async getHistoryForIA(userid: number): Promise<Message[]> {
     try {
       return await this.db("user_message_user").where({ identifier_chat: `1,${userid}` });

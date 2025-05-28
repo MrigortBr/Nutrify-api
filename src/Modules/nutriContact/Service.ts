@@ -21,7 +21,6 @@ export default class NutriService {
     if (!hourid) throw new Error("NC-E-NN");
     if (!price) throw new Error("NC-E-NN");
 
-
     const r = await this.model.MarkInquiry(userId, nutriId, hourid, Number(price));
     return r;
   }
@@ -37,7 +36,7 @@ export default class NutriService {
 
     let dateObj = new Date();
 
-    if (date && typeof date == "string") dateObj = new Date(date);
+    if (date && typeof date == "string") dateObj = new Date(date + "T03:00:00.000Z");
 
     const r = await this.model.getMyServiceLastNutri(userId, dateObj);
     return r;
@@ -52,11 +51,11 @@ export default class NutriService {
   async getMyServiceOpenNutri(userId: number | undefined, date: string | undefined | any): Promise<NutriOpen[]> {
     if (!userId) throw new Error("NC-E-NN");
 
-    let dateObj = new Date();
+    if (!date || typeof date != "string") throw new Error("NC-E-NN");
 
-    if (date && typeof date == "string") dateObj = new Date(date);
+    const { startUtc, endUtc } = this.getUtcRangeFromLocalDateString(date);
 
-    const r = await this.model.getMyServiceOpenNutri(userId, dateObj);
+    const r = await this.model.getMyServiceOpenNutri(userId, startUtc, endUtc);
     return r;
   }
 
@@ -90,5 +89,17 @@ export default class NutriService {
     if (!response) throw new Error("reload");
 
     return response;
+  }
+
+  private getUtcRangeFromLocalDateString(dateStr: string): { startUtc: string; endUtc: string } {
+    const [year, month, day] = dateStr.split("-").map(Number);
+
+    const start = new Date(year, month - 1, day, 0, 0, 0, 0);
+    const end = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+    return {
+      startUtc: start.toISOString(),
+      endUtc: end.toISOString(),
+    };
   }
 }

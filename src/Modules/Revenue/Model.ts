@@ -52,6 +52,25 @@ export default class RevenueModel {
     }
   }
 
+  async iCanEditThisClient(nutri_id: number, userId: string, id: string) {
+    try {
+      const r: { service_final: Date } = await this.db("user_nutri")
+        .select("nutri_hour.service_final")
+        .join("nutri_hour", "nutri_hour.id", "user_nutri.id")
+        .where({ "user_nutri.nutri_id": nutri_id, "user_nutri.user_id": userId, "user_nutri.id": id })
+        .first();
+
+      return r.service_final;
+    } catch (error) {
+      console.log(error);
+      if (typeof (error as { code: string }).code == "string") {
+        const code = (error as { code: string }).code;
+        if (code == "23505") throw new Error("FC-E-UHFU");
+      }
+      throw new Error("PE-UNKW");
+    }
+  }
+
   async createRevenue(nutri_id: number, data: RevenueDate): Promise<number> {
     try {
       const r: { id: number }[] = await this.db("nutri_revenue")

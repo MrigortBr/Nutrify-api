@@ -26,12 +26,12 @@ export default class RevenueController {
     }
   }
 
-  @Get("/user/:id/:date", [Authorization, AuthorizationNutri])
+  @Get("/user/:userid/:date/:id", [Authorization, AuthorizationNutri])
   async GetRevenuesForClient(req: RequestAuthorized, res: Response, next: NextFunction) {
     try {
       const nutriId = req.nutriId;
-      const { id, date } = req.params;
-      const result = await this.service.getRevenuesForClient(nutriId, id, date);
+      const { id, date, userid } = req.params;
+      const result = await this.service.getRevenuesForClient(nutriId, userid, date, id);
       res.send(result).status(result.statusCode);
     } catch (error) {
       next(error);

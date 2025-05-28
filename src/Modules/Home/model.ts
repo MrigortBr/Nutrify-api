@@ -14,7 +14,6 @@ export default class HomeModel {
     try {
       return this.db.transaction(async (db) => {
         let myVisibility = ["*"];
-
         let r: SimplePost[] = await db("post")
           .select([
             "users.picture as pictureUser",
@@ -23,8 +22,8 @@ export default class HomeModel {
             "post.picture",
             "post.caption",
             db.raw("BOOL_OR(post_like.user_id = ?)::BOOLEAN as iLike", [id]),
-            db.raw("COUNT(post_like.post_id) as likes"),
-            db.raw("COUNT(distinct post_comments.post_id) as commentsNumber"),
+            db.raw("COUNT(DISTINCT post_like.user_id) as likes"),
+            db.raw("COUNT(DISTINCT post_comments.id) as commentsNumber"),
           ])
           .leftJoin("users", "users.id", "post.user_id")
           .leftJoin("post_like", "post.id", "post_like.post_id")
@@ -37,9 +36,8 @@ export default class HomeModel {
           })
           .groupBy(["post.id", "users.picture", "users.username", "post.picture", "post.caption"])
           .orderBy("post.created_at", "desc");
-        
-        
-         return r;
+
+        return r;
       });
     } catch (error) {
       throw new Error("PE-UNKW");
@@ -64,8 +62,8 @@ export default class HomeModel {
             "post.picture",
             "post.caption",
             db.raw("BOOL_OR(post_like.user_id = ?)::BOOLEAN as iLike", [id]),
-            db.raw("COUNT(post_like.post_id) as likes"),
-            db.raw("COUNT(post_comments.post_id) as commentsNumber"),
+            db.raw("COUNT(DISTINCT post_like.user_id) as likes"),
+            db.raw("COUNT(post_comments.id) as commentsNumber"),
           ])
           .leftJoin("user_follow_user", "user_follow_user.following", "post.user_id")
           .where("user_follow_user.follower", id)
