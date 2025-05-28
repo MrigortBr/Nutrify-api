@@ -46,8 +46,6 @@ export default class RevenueService {
     if (!nutriId) throw new Error("NC-E-NN");
     if (!data) throw new Error("NC-E-NN");
 
-    console.log(data);
-
     data.dateInit = this.toISOStringWithTime(data.dateInit);
     data.dateFinal = this.toISOStringWithTime(data.dateFinal);
 
@@ -71,12 +69,12 @@ export default class RevenueService {
     return response;
   }
 
-  async updateRevenue(nutriId: number | undefined, data: Revenue | undefined): Promise<RevenueResponse> {
+  async updateRevenue(nutriId: number | undefined, data: RevenuePlan | undefined): Promise<RevenueResponse> {
     if (!nutriId) throw new Error("NC-E-NN");
     if (!data) throw new Error("NC-E-NN");
 
-    data.initHour = this.toISOStringWithTime(data.initHour);
-    data.finalHour = this.toISOStringWithTime(data.finalHour);
+    data.dateInit = this.toISOStringWithTime(data.dateInit);
+    data.dateFinal = this.toISOStringWithTime(data.dateFinal);
 
     await this.model.updateRevenue(nutriId, data);
 
@@ -95,7 +93,10 @@ export default class RevenueService {
   }
 
   private toISOStringWithTime(time: string): string {
-    return new Date(`${new Date().toISOString().split("T")[0]}T${time}:00`).toISOString();
+    const date = `${new Date().toISOString().split("T")[0]}T${time}:00`;
+    const dateObj = new Date(date);
+    dateObj.setHours(dateObj.getHours() - 3);
+    return dateObj.toUTCString();
   }
 
   private hasPassed48Hours(date: Date): boolean {

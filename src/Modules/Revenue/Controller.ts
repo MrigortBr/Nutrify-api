@@ -67,7 +67,7 @@ export default class RevenueController {
   async updateRevenue(req: RequestAuthorized, res: Response, next: NextFunction) {
     try {
       const nutriId = req.nutriId;
-      const data: Revenue = req.body.revenue;
+      const data: RevenuePlan = req.body.revenue;
       const result = await this.service.updateRevenue(nutriId, data);
       res.send(result).status(result.statusCode);
     } catch (error) {

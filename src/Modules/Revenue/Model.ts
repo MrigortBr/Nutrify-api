@@ -79,8 +79,8 @@ export default class RevenueModel {
           picture: data.picture,
           name: data.name,
           nameType: data.nameType,
-          dateInit: data.dateInit,
-          dateFinal: data.dateFinal,
+          dateInit: new Date(data.dateInit),
+          dateFinal: new Date(data.dateFinal),
           kcal: data.kcal,
           recipe: data.recipe,
         })
@@ -123,15 +123,15 @@ export default class RevenueModel {
     }
   }
 
-  async updateRevenue(nutri_id: number, data: Revenue) {
+  async updateRevenue(nutri_id: number, data: RevenuePlan) {
     try {
       await this.db("nutri_revenue")
         .update({
           picture: data.picture,
           name: data.name,
-          nameType: data.typeRevenue,
-          dateInit: data.initHour,
-          dateFinal: data.finalHour,
+          nameType: data.nameType,
+          dateInit: data.dateInit,
+          dateFinal: data.dateFinal,
           kcal: data.kcal,
           recipe: data.recipe,
         })
